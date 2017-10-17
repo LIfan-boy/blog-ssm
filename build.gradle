@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+        maven {
+            credentials {
+                username 'admin'
+                password 'admin123'
+            }
+            url('http://192.168.0.215:8078/repository/maven-punlic/')
+        }
+        mavenCentral()
+    }
+}
+
+group = 'com.meng'
+version = '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'idea'
+
+dependencies {
+    compile(gradleApi())
+    compile(localGroovy())
+    testCompile('junit:junit:4.12')
+    compile('javax.servlet:javax.servlet-api:3.1.0')
+    compile('javax.servlet:jstl:1.1.2')
+}
+
+
+task sourceJar(type: Jar) {
+//    from sourceSets.main.groovy
+    from sourceSets.main.resources
+    classifier = 'sources'
+}
+
+artifacts {
+    archives sourceJar
+}
+
