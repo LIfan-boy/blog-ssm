@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<context:component-scan base-package="com.meng" />
+
+    <!-- 配置基于注解的声明式事务，默认使用注解来管理事务行为 -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<!-- 配置spring声明式事物管理:第二种方式：基于xml -->  
+    <!-- 配置事务切入点，局限方法名（采用XML方法配置） -->  
+    <tx:advice id="advice" transaction-manager="transactionManager">  
+        <tx:attributes>  
+            <!-- 配置那些方法需要切入什么事务类型 -->  
+            <tx:method name="save*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>  
+            <tx:method name="delete*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>  
+            <tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>  
+            <tx:method name="remove*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>  
+            <tx:method name="add*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>  
+            <tx:method name="*" propagation="SUPPORTS"/>  
+        </tx:attributes>  
+    </tx:advice>  
+      
+    <!-- 上面只配置了方法的事务类型，并没有配置向哪些类（对象）切入 -->  
+    <!-- 关联切入表达式 -->  
+    <aop:config>  
+        <aop:advisor advice-ref="advice" pointcut="execution(* com.meng.service.*.*(..))"/>  
+        <aop:advisor advice-ref="advice" pointcut="execution(* com.meng.service.impl.*.*(..))"/>  
+    </aop:config>  
+</beans>

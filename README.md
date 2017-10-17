@@ -1,2 +1,2 @@
 # blog-ssm
-A blog example.
+A blog project for ssm example.

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meng.dao.CommentDao">
+
+	<resultMap type="Comment" id="CommentResult">
+		<id property="commentId" column="comment_id"/>
+		<result property="commentDate" column="comment_date"/>
+		<result property="commentContent" column="comment_content"/>
+		<result property="auditStatus" column="audit_status"/>
+		<association property="visitorId" column="visitor_id" select="com.meng.dao.VisitorDao.getById"></association>
+		<association property="blogId" column="blog_id" select="com.meng.dao.BlogDao.getById"></association>
+	</resultMap>
+		
+	<sql id="CommentColumns">
+        comment_id,visitor_id,comment_date,comment_content,audit_status,blog_id
+    </sql>
+
+	<insert id="addComment" parameterType="Comment" keyProperty="comment_id" useGeneratedKeys="true">
+        insert into t_comment VALUES (null, #{visitorId.visitorId},now(),#{commentContent},1,#{blogId.id})
+    </insert>
+    
+    <select id="getCommentData" parameterType="Integer" resultMap="CommentResult">
+		select * from t_comment where audit_status=1 and blog_id=#{blogId.id}
+	</select>
+	
+	<select id="getTotal" parameterType="Integer" resultType="Integer">
+		select count(*) from t_comment where audit_status=1 and blog_id=#{blogId.id}
+	</select>
+	
+	<delete id="deleteCommentByBlogId" parameterType="Integer">
+		DELETE FROM db_blog.t_comment where blog_id=#{blogId.id}
+	</delete>
+<!-- 
+	<select id="listBlog" parameterType="Map" resultMap="BlogResult">
+        SELECT * FROM t_blog
+        <where>
+            <if test="title!=null and title!=''">
+                and title like "%"#{title}"%"
+            </if>
+            <if test="typeId!=null and typeId!=''">
+                and type_id=#{typeId}
+            </if>
+            <if test="releaseDateStr!=null and releaseDateStr!=''">
+                and DATE_FORMAT(releaseDate,'%Y年%m月')=#{releaseDateStr}
+            </if>
+        </where>
+        ORDER BY releaseDate DESC
+        <if test="start!=null and end!=null">
+            limit #{start},#{end}
+        </if>
+    </select>
+
+	<select id="getTotal" parameterType="Map" resultType="Long">
+        SELECT COUNT(*) FROM t_blog
+        <where>
+            <if test="title!=null and title!=''">
+                and title like "%"#{title}"%"
+            </if>
+        </where>
+    </select>
+	
+	<select id="getBlogByTypeId" parameterType="Integer" resultType="Integer">
+		select count(*) from t_blog where type_id=#{typeId}
+	</select>
+	
+	<update id="updateBlog" parameterType="Blog">
+        update t_blog
+        <set>
+            <if test="title!=null and title!=''">
+                title=#{title},
+            </if>
+            <if test="summary!=null and summary!=''">
+                summary=#{summary},
+            </if>
+            <if test="content!=null and content!=''">
+                content=#{content},
+            </if>
+            <if test="blogType.id!=null">
+                type_id=#{blogType.id},
+            </if>
+            <if test="clickHit!=null">
+                clickHit=#{clickHit},
+            </if>
+            <if test="replyHit!=null">
+                replyHit=#{replyHit},
+            </if>
+            <if test="keyWord!=null and keyWord!=''">
+                keyWord=#{keyWord},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    
+    <select id="getById" parameterType="java.lang.Integer" resultMap="BlogResult">
+        SELECT * from t_blog where id=#{id}
+    </select>
+    
+    <select id="getBlogByMun" parameterType="Integer" resultMap="BlogResult">
+    	select * from t_blog limit 0,#{num}
+    </select>
+    
+    <select id="getBlogByFuzzy" parameterType="String" resultMap="BlogResult">
+    	select * from t_blog where title like '%${str}%'
+    </select>
+    
+ -->	
+</mapper> 
